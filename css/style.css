@@ -1,0 +1,162 @@
+div.hero-unit
+{
+    background: #eeeeee url(../img/find-icon.png) no-repeat top right;
+}
+h1 .title
+{
+    font-weight: normal;
+    text-transform:uppercase;
+    font-family: 'Erica One', cursive;
+    font-size:100px;
+    margin-bottom:-32px;
+    margin-left:10px;
+    color:#c44032;
+    text-shadow:#CCCCCC -4px 4px 0;
+    margin-top:30px;
+}
+h1 .title span
+{
+    display:inline-block;
+    position:relative;
+    letter-spacing: -7px;
+    -webkit-transition:all 0.2s ease-out;
+}
+h1 .title span:hover
+{
+    top:3px
+}
+h1 .title .char2,
+h1 .title .char11
+{
+    color:#999999;
+    text-shadow:#CCCCCC -4px 4px 0
+}
+h1 .title .char3,
+h1 .title .char10
+{
+    z-index:10;
+    color:#F7F7F7;
+    text-shadow:#555555 -4px 4px 0
+}
+h1 .title .char4,
+h1 .title .char9
+{
+    color:#999999;
+    text-shadow:#CCCCCC -4px 4px 0;
+}
+h1 .title .char5,
+h1 .title .char8
+{
+    color:#584242;
+    text-shadow:#CCCCCC -4px 4px 0;
+}
+h1 .title .char6, h1 .title .char7
+{
+    color:#C44032;
+    text-shadow:#CCCCCC -4px 4px 0;
+}
+h1 .title .char1
+{
+    -webkit-transform:rotate(-3deg);
+}
+h1 .title .char2
+{
+    top:7px;
+}
+h1 .title .char3
+{
+    top:-1px;
+    -webkit-transform:rotate(2deg);
+}
+h1 .title .char4
+{
+    top:-7px;
+}
+h1 .title .char6
+{
+    top:-7px;
+    -webkit-transform:rotate(2deg);
+}
+h1 .title .char7
+{
+
+}
+h1 .title .char8
+{
+    top:1px;
+    -webkit-transform:rotate(-2deg);
+}
+h1 .title .char9
+{
+    -webkit-transform:rotate(2deg);
+}
+h1 .title .char10
+{
+    top: -12px;
+    width: 80px;
+}
+h1 .title .char10:hover
+{
+    -webkit-transition-duration:0.4s;
+}
+h1 .title .char11
+{
+    top:2px;left:-30px;width:50px;-webkit-transform:rotate(-3deg);
+}
+h1 .title .char12
+{
+    left:-24px;
+}
+h1 .subtitle
+{
+    font-weight: normal;
+    font-family: 'Erica One', cursive;
+    font-size:35px;
+    color: #555;
+}
+
+div#search-icon-container
+{
+    display: none;
+    width: 400px;
+    height: 245px;
+    margin: 0 auto;
+}
+div#search-icon-container img
+{
+   float: left;
+}
+
+/* Speech Bubble */
+.triangle-border:after {
+    border-color: #FFFFFF transparent;
+    border-style: solid;
+    border-width: 13px 13px 0;
+    bottom: -13px;
+    content: "";
+    display: block;
+    left: 47px;
+    position: absolute;
+    width: 0;
+}
+.triangle-border:before {
+    border-color: #5A8F00 transparent;
+    border-style: solid;
+    border-width: 20px 20px 0;
+    bottom: -20px;
+    content: "";
+    display: block;
+    left: 40px;
+    position: absolute;
+    width: 0;
+}
+.triangle-border {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 5px solid #5A8F00;
+    border-radius: 10px 10px 10px 10px;
+    color: #333333;
+    margin: 1em 0 3em;
+    padding: 15px;
+    position: relative;
+    width:200px;
+}
