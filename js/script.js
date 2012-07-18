@@ -6,7 +6,7 @@ $(document).ready(function(){
         if(showMeIconLinkText == null) showMeIconLinkText = $(this).text();
         var $this = $(this);
         $("div#search-icon-container").slideToggle(1000, 'easeInOutBack', function() {
-            $(".triangle-border").effect("shake", {
+            $(".triangle-border").effect("bounce", {
                 times:2
             }, 300);
             if(!$(this).is(":visible"))

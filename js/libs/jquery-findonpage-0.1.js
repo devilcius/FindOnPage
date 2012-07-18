@@ -27,9 +27,10 @@
 
             base.options = $.extend({},$.findOnPage.defaultOptions, options);
 
-            if(base.options.caseSensitive) {
+            if(!base.options.caseSensitive) {
                 jQuery.expr[':'].contains = function (a, i, m) {
-                    return jQuery(a).text().toLowerCase().indexOf(m[3].toLowerCase()) >= 0;
+                    var result = jQuery(a).text().match(new RegExp(m[3], "ig"));
+                    return result != null && result.length > 0;
                 };
             }
 
@@ -40,6 +41,7 @@
             var $searchBoxContainer = $("<div id='search_box-container' />");
             var currentMatchIndex = 0;
             var matchCount = 0;
+            
             $searchBoxContainer.append($closeButton, $searchBox, $searchNavigationButtons, $searchMatchesContainer);
             $searchBoxContainer.appendTo("body").slideDown(1500, "easeOutBounce", base.callback );
             $searchBox.focus();
@@ -55,18 +57,28 @@
                 // p1 is nondigits, p2 digits, and p3 non-alphanumerics
                 return '<span class="' + base.options.textHighlightClass + '">' + match + '</span>';
             }
+            function stripSpecialRegexCharacter(string) {
+                var specialChars = ["\\\\", "\\[", "\\]", "\\(", "\\)", "\\/", "\\*", "\\+", "\\?", "\\{", "\\}"];
+                var result = string;
+                for (var index in specialChars)
+                    result = result.replace(new RegExp(specialChars[index], "g"), ".");
+
+                return result;
+            }
+
             $searchBox.keyup(function (event) {
-                $('.' + base.options.textHighlightClass).contents().unwrap(); //removes previously added span.textFound
+                $('.text-found').contents().unwrap(); //removes previously added span.textFound
                 matchCount = 0;
                 var $this = $(this);
                 currentMatchIndex = 0;
-                if ($this.val().length > base.options.minLength) {
+                if ($this.val().length > 3) {
 
-                    $('*:contains(' + $(this).val() + ')').filter(':visible').each(function () {
+                    var theRegex = stripSpecialRegexCharacter($this.val()).replace(new RegExp("\\s", "g"), "\\s+").replace(new RegExp("'", "g"), "\\'");
+                    $('*:contains(' + theRegex + ')').filter(':visible').each(function () {
                         if ($(this).children().not('a, span').length < 1) {
                             matchCount++;
                             $(this).html(
-                                $(this).html().replace(new RegExp("[a-zA-Z]"+$this.val().substr(1)),
+                                $(this).html().replace(new RegExp(theRegex, "i"),
                                     replacer)
                                 );
                         }
@@ -75,8 +87,14 @@
                     //enable next match button if more than 1 result found
                     if (matchCount > 1)
                         $("button#search-fw").removeClass("ui-button-disabled ui-state-disabled");
-                    if (matchCount === 0)
+                    else {
+                        $("button#search-fw").addClass("ui-button-disabled ui-state-disabled");
+                        $("button#search-bw").addClass("ui-button-disabled ui-state-disabled");
+                    }
+                    if (matchCount === 0) {
                         $searchMatchesContainer.text(0);
+                        $('html').scrollTop(0);
+                    }
                     else //update match counter
                         $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + matchCount);
 
@@ -84,19 +102,21 @@
                     if ($("span." + base.options.textHighlightClass).length) {
                         scrollToMatch(0);
                     }
+
                 }
+
             });
             //navigation buttons
             $("#search_text_buttons-container button.match-nav").live("click", function () {
-                var matches = $("span.text-found").length;
+                var matchCount = $("span." + base.options.textHighlightClass).length;
                 var direction = $(this).attr("id");
 
-                if (matches < 2) {
+                if (matchCount < 2) {
                     $("button.match-nav").addClass("ui-button-disabled ui-state-disabled");
                     return false;
                 }
 
-                if (direction == "search-fw" && (currentMatchIndex < (matches - 1))) {
+                if (direction == "search-fw" && (currentMatchIndex < (matchCount - 1))) {
                     currentMatchIndex++;
                     scrollToMatch(currentMatchIndex);
                 }
@@ -105,35 +125,37 @@
                     scrollToMatch(currentMatchIndex);
                 }
                 //update match counter
-                $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + matches);
+                $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + matchCount);
 
             });
 
             function scrollToMatch(matchIndex) {
 
-                var firstMatchYPosition = $("span.text-found").eq(matchIndex).offset().top;
+                var firstMatchYPosition = $("span." + base.options.textHighlightClass).eq(matchIndex).offset().top;
                 var windowHeight = $(window).height();
                 $('html, body').animate({
                     scrollTop: firstMatchYPosition - (windowHeight / 2)
                 }, 800, updateNavButtons);
                 function updateNavButtons() {
-
-                    switch (currentMatchIndex) {
+                    switch (matchIndex) {
                         case 0:
                             $("button#search-bw").addClass("ui-button-disabled ui-state-disabled");
-                            $("button#search-fw").removeClass("ui-button-disabled ui-state-disabled");
+                            if (matchCount > 1) // if there is only one match both must be disabled
+                                $("button#search-fw").removeClass("ui-button-disabled ui-state-disabled");
                             break;
                         case (matchCount - 1):
                             $("button#search-fw").addClass("ui-button-disabled ui-state-disabled");
+                            if (matchCount > 1) // if there is only one match both must be disabled
+                                $("button#search-bw").removeClass("ui-button-disabled ui-state-disabled");
+                            break;
+                        default:
+                            $("button#search-fw").removeClass("ui-button-disabled ui-state-disabled");
                             $("button#search-bw").removeClass("ui-button-disabled ui-state-disabled");
                             break;
-
                     }
                 }
             }
         };
-
-
 
         // Run initializer
         base.init();

@@ -2,6 +2,10 @@ div.hero-unit
 {
     background: #eeeeee url(../img/find-icon.png) no-repeat top right;
 }
+div.hero-unit p
+{
+    padding: 10px;
+}
 h1 .title
 {
     font-weight: normal;
@@ -159,4 +163,13 @@ div#search-icon-container img
     padding: 15px;
     position: relative;
     width:200px;
+}
+.row .span4
+{
+    font-size: 1.1em;
+}
+.row .span4 img
+{
+    float: left;
+    padding:2px 5px;
 }
