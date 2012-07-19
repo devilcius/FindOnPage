@@ -21,7 +21,7 @@
             }
             /* findOnPage style */
 
-            div#search_box-container {
+            div#fop_search_box-container {
                 position: fixed;
                 top: 0;
                 left: 2px;
@@ -31,19 +31,19 @@
                 display:none;
                 box-shadow: 1px 1px 1px #555555;
             }
-            div#search_box-container input,
-            div#search_box-container div {
+            div#fop_search_box-container input,
+            div#fop_search_box-container div {
                 display: inline-block;
                 margin:2px;
             }
-            div#search_box-container button {
+            div#fop_search_box-container button {
                 height: 2.2em;
                 width: 2.6em;
                 position: relative;
                 padding: 2px;
             }
 
-            div#search_box-container #search_matching-container {
+            div#fop_search_box-container #fop_search_matching-container {
                 color: #2E6E9E;
                 display: inline-block;
                 padding: 4px 3px;
@@ -55,6 +55,9 @@
                 display: inline-block;
                 padding: 1px;
                 background-color: Yellow;
+            }
+            div#fop_search_box-container button[disabled] {
+                cursor: default;
             }
 
         </style>
@@ -126,7 +129,7 @@
                 </div>
                 <div class="span4">
                     <h2>If you really have to</h2>
-                    <img src="img/mother-care.png" width="66" height="69" alt="Achtun!" />
+                    <img src="img/sad-face.png" width="42" height="76" alt="Achtun!" />
                     <p>There should be a link somewhere in this page to get it from github. It's been tested with some modern browswers (you know who you are) and it does require jquery. Otherwise, I feel sorry for you.</p>
                     <p><a class="btn" href="#">View details &raquo;</a></p>
                 </div>
