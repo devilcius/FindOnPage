@@ -82,14 +82,12 @@
 
             function highlightMe(regex, node) {
 
-                var result = base.options.caseSensitive? node.text().match(regex) : node.text().match(regex, "i");
+                var result = base.options.caseSensitive? node.clone().children().remove().end().text().match(regex) : node.clone().children().remove().end().text().match(regex, "i");
                 if (result) { // matching!
-                    console.log(node.text(), node.prop("tagName"));
                     node.html(
                         node.html().replace(new RegExp(regex, "ig"), replacer)
                         );
                 }
-
             }
 
             $searchBox.keyup(function (event) {
@@ -171,6 +169,15 @@
                 $('html, body').animate({
                     scrollTop: firstMatchYPosition - (windowHeight / 2)
                 }, 800);
+
+                if(( $searchBoxContainer.offset().top + $searchBoxContainer.height() ) > firstMatchYPosition)
+                    $searchBoxContainer.css({right : "2px", left : 'auto'});
+                else
+                    $searchBoxContainer.css({left : "2px", right : "auto"});
+                
+                console.log(firstMatchYPosition, "match position");
+                console.log($searchBoxContainer.offset().top, "search container position")
+                console.log($searchBoxContainer.height(), "search container height")
 
                 switch (matchIndex) {
                     case 0:
