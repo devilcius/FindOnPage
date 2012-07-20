@@ -24,19 +24,6 @@
             return '<span class="' + base.options.textHighlightClass + '">' + match + '</span>';
         }
 
-        base.hilight = function(regex, node) {
-
-            if (node.nodeType === 3) { // 3 - Text node
-                //console.log($(node).text())
-                $(node).text().replace(new RegExp(regex, "i"), base.replacer);
-                
-            } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) { // 1 - Element node
-                for (var i = 0; i < node.childNodes.length; i++) { // highlight all children
-                    i += base.hilight(regex, node.childNodes[i]); // skip highlighted ones
-                }
-            }
-
-        }
 
         base.init = function(){
             
@@ -52,7 +39,7 @@
                     return result != null && result.length > 0;
                 };
             }
-
+            
             var $closeButton = $("<button id='close-fop_search_box-container' >X</button>");
             var $searchBox = $("<input id='input-text' type='text' />")
             var $searchNavigationButtons = $("<div id='fop_search_text_buttons-container'><button disabled='disabled' id='fop_search-bw'>&lt;&lt;</button><button disabled='disabled' type='button' id='fop_search-fw' >&gt;&gt;</button></div>");
@@ -60,6 +47,7 @@
             var $searchBoxContainer = $("<div id='fop_search_box-container' />");
             var currentMatchIndex = 0;
             var matchCount = 0;
+            var isScrolled = false;
             
             if(!launched) {
                 $searchBoxContainer.append($closeButton, $searchBox, $searchNavigationButtons, $searchMatchesContainer);
@@ -88,21 +76,20 @@
                 return result;
             }
 
+            function sizeSort(a,b){
+                return a.innerHTML.length > b.innerHTML.length ? 1 : -1;
+            };
 
-            function hilight(regex, node) {
-                //mas recursivo aún, hasta el foooondo!!!
-                for (var i = 0; i < node.children().length; i++) {
-                    var child = node.children().eq(i);
-                    var pos = child.text().search(regex);
-                    if (pos >= 0 && child.text().length > 0) { // .* matching ""
-                        child.html(
-                            child.html().replace(new RegExp(regex, "i"), replacer)
-                            );
-                        return true;
-                    }
+            function highlightMe(regex, node) {
+
+                var result = base.options.caseSensitive? node.text().match(regex) : node.text().match(regex, "i");
+                if (result) { // matching!
+                    console.log(node.text(), node.prop("tagName"));
+                    node.html(
+                        node.html().replace(new RegExp(regex, "ig"), replacer)
+                        );
                 }
 
-                return false;
             }
 
             $searchBox.keyup(function (event) {
@@ -114,17 +101,17 @@
 
                 if ($this.val().length > base.options.minLength) {
                     var theRegex = stripSpecialRegexCharacter($this.val()).replace(new RegExp("\\s", "g"), "\\s+").replace(new RegExp("'", "g"), "\\'");                    
-
-                    $('body')
-                    .children()
+                    $(base.options.parentContainer)
+                    .find('*')
+                    .sort(sizeSort)
+                    .filter(":visible")
                     .each(function(){
-                        if(hilight(theRegex, $(this))) {
-                            matchCount++;
-                        }
-                        console.log($(this))
-                        console.log($(this).text())
+                        if (!$(this).find("." + base.options.textHighlightClass).length)
+                            highlightMe(theRegex, $(this));
                     });
 
+                    matchCount = $("span." + base.options.textHighlightClass).length;
+                    
                     //enable next match button if more than 1 result found
                     if (matchCount > 1)
                         $("button#fop_search-fw").attr("disabled",false);
@@ -139,8 +126,9 @@
                         $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + matchCount);
 
                     //scrolls to first match
-                    if ($("span." + base.options.textHighlightClass).length) {
+                    if ($("span." + base.options.textHighlightClass).length && !isScrolled) {
                         scrollToMatch(0);
+                        isScrolled = true;
                     }
 
                 }
@@ -148,21 +136,22 @@
 
                     $searchMatchesContainer.text(0);
                     $searchBoxContainer.find("button:not(#close-fop_search_box-container)").attr("disabled",true);
+                    isScrolled = false;
                 }
 
             });
             //navigation buttons
-            $("#fop_search_text_buttons-container button:not(#close-fop_search_box-container)").live("click", function () {
+            $("#fop_search_text_buttons-container button:not(#close-fop_search_box-container)").click(function () {
 
-                var matchCount = $("span." + base.options.textHighlightClass).length;
+                var currentMatchCount = $("span." + base.options.textHighlightClass).length;
                 var direction = $(this).attr("id");
 
-                if (matchCount < 2) {
+                if (currentMatchCount < 2) {
                     $("button.match-nav").attr("disabled",true);
                     return false;
                 }
 
-                if (direction == "fop_search-fw" && (currentMatchIndex < (matchCount - 1))) {
+                if (direction == "fop_search-fw" && (currentMatchIndex < (currentMatchCount - 1))) {
                     currentMatchIndex++;
                     scrollToMatch(currentMatchIndex);
                 }
@@ -171,7 +160,7 @@
                     scrollToMatch(currentMatchIndex);
                 }
                 //update match counter
-                $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + matchCount);
+                $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + currentMatchCount);
 
             });
 
@@ -212,7 +201,8 @@
         caseSensitive: false,
         excludedChildElements: 'a,b',
         textHighlightClass: 'text-found',
-        minLength: 3
+        minLength: 3,
+        parentContainer: 'body'
     };
 
     $.fn.findOnPage = function( options, callback ) {
