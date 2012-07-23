@@ -62,7 +62,6 @@
                 launched = false;
             });
 
-            //search box input
             function replacer(match, p1, p2, p3, offset, string) {
                 // p1 is nondigits, p2 digits, and p3 non-alphanumerics
                 return '<span class="' + base.options.textHighlightClass + '">' + match + '</span>';
@@ -78,7 +77,7 @@
 
             function sizeSort(a,b){
                 return a.innerHTML.length > b.innerHTML.length ? 1 : -1;
-            };
+            }
 
             function highlightMe(regex, node) {
 
@@ -164,20 +163,13 @@
 
             function scrollToMatch(matchIndex) {
 
-                var firstMatchYPosition = $("span." + base.options.textHighlightClass).eq(matchIndex).offset().top;
+                var $firstMatchingSpan = $("span." + base.options.textHighlightClass).eq(matchIndex);
                 var windowHeight = $(window).height();
                 $('html, body').animate({
-                    scrollTop: firstMatchYPosition - (windowHeight / 2)
+                    scrollTop: $firstMatchingSpan.offset().top - (windowHeight / 2)
                 }, 800);
 
-                if(( $searchBoxContainer.offset().top + $searchBoxContainer.height() ) > firstMatchYPosition)
-                    $searchBoxContainer.css({right : "2px", left : 'auto'});
-                else
-                    $searchBoxContainer.css({left : "2px", right : "auto"});
-                
-                console.log(firstMatchYPosition, "match position");
-                console.log($searchBoxContainer.offset().top, "search container position")
-                console.log($searchBoxContainer.height(), "search container height")
+
 
                 switch (matchIndex) {
                     case 0:
@@ -214,7 +206,7 @@
 
     $.fn.findOnPage = function( options, callback ) {
         var self = this;
-        this.click(function(event){
+        this.bind("click", function(event){
             event.preventDefault();
             if(!launched)
                 return (new $.findOnPage(self, options, callback));

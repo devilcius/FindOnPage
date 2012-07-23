@@ -25,11 +25,12 @@
                 position: fixed;
                 top: 0;
                 left: 2px;
-                background-color: #F7F7F7;
+                background-color: #FFFFFF;
                 z-index: 99999;
                 padding: 3px 8px;
                 display:none;
                 box-shadow: 1px 1px 1px #555555;
+                opacity: .9;
             }
             div#fop_search_box-container input,
             div#fop_search_box-container div {
@@ -47,7 +48,7 @@
                 color: #2E6E9E;
                 display: inline-block;
                 padding: 4px 3px;
-                border:1px inset #F7f7f7;
+                border:1px inset #FFFFFF;
                 width: 41px;
                 text-align: center;
             }
@@ -87,10 +88,9 @@
                     </a>
                     <a class="brand" href="#">Find on page</a>
                     <div class="nav-collapse">
-                        <ul class="nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li><a href="#about">About</a></li>
-                            <li><a href="#contact">Contact</a></li>
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+                            <li><a href="#usage" data-toggle="tab">Usage</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -98,43 +98,48 @@
         </div>
 
         <div class="container">
+            <div class="tab-content">
+                <div class="tab-pane active" id="home">
+                    <!-- Main hero unit for a primary marketing message or call to action -->
+                    <div id="main-header" class="hero-unit">
+                        <h1><span class="title">find.on.page</span> <span class="subtitle">a jQuery plugin</span></h1>
+                        <p>Your customer is not tech-savvy enough to hit Control-F?... <span style="font-family:monospace;">Menu > toolbar > find</span> is all chinese to him?... This -otherwise useless- jQuery plugin comes to rescue! Just click on the find icon and a fancy search box magically shows up!</p>
+                        <p><a id="show-me-icon-link" class="btn btn-primary btn-large">Show me that icon! &raquo;</a></p>
+                        <div id="search-icon-container">
+                            <p class="triangle-border"><span>Go ahead, click me gently...</span></p>
+                            <a href="" id="find-on-page">
+                                <img src="img/find-icon.png" alt="find.on.page.icon" width="128" height="128" />
+                            </a>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
 
-            <!-- Main hero unit for a primary marketing message or call to action -->
-            <div id="main-header" class="hero-unit">
-                <h1><span class="title">find.on.page</span> <span class="subtitle">a jQuery plugin</span></h1>
-                <p>Your customer is not tech-savvy enough to hit Control-F?... <span style="font-family:monospace;">Menu > toolbar > find</span> is all chinese to him?... This -otherwise useless- jQuery plugin comes to rescue! Just click on the find icon and a fancy search box magically shows up!</p>
-                <p><a id="show-me-icon-link" class="btn btn-primary btn-large">Show me that icon! &raquo;</a></p>
-                <div id="search-icon-container">
-                    <p class="triangle-border"><span>Go ahead, click me gently...</span></p>
-                    <a href="" id="find-on-page">
-                        <img src="img/find-icon.png" alt="find.on.page.icon" width="128" height="128" />
-                    </a>
+                    <!-- Example row of columns -->
+                    <div class="row">
+                        <div class="span4">
+                            <h2>Why you shouldn't use it</h2>
+                            <img src="img/danger.png" width="55" height="55" alt="Achtun!" />
+                            <p>Every modern browser has a built in finder, more powerful, reliable and faster than this modest plugin. I'm not a jQuery plugin specialist so this piece of code is likely full of bugs, glitches, trojans and god only knows what else.</p>
+                            <p><a class="btn" href="#">View details &raquo;</a></p>
+                        </div>
+                        <div class="span4">
+                            <h2>Your boss think the other way</h2>
+                            <img src="img/boss.png" width="77" height="66" alt="Achtun!" />
+                            <p>The customer is always right, who do you think you are to contradict him? A programmer, that's what you are. Don't pretend to know anything about human habits. The truth is real men like to click buttons, keys shortcuts and toolbars are for loosers. Period.</p>
+                            <p><a class="btn" href="#">View details &raquo;</a></p>
+                        </div>
+                        <div class="span4">
+                            <h2>If you really have to</h2>
+                            <img src="img/sad-face.png" width="42" height="76" alt="Achtun!" />
+                            <p>There should be a link somewhere in this page to get it from github. It's been tested with some modern browswers (you know who you are) and it does require jquery. Otherwise, I feel sorry for you.</p>
+                            <p><a class="btn" href="#">View details &raquo;</a></p>
+                        </div>
+                    </div>
                 </div>
-                <div style="clear:both"></div>
+                <div class="tab-pane" id="usage">
+                    <h1>buh!</h1>
+                </div>
             </div>
-
-            <!-- Example row of columns -->
-            <div class="row">
-                <div class="span4">
-                    <h2>Why you shouldn't use it</h2>
-                    <img src="img/danger.png" width="55" height="55" alt="Achtun!" />
-                    <p>Every modern browser has a built in finder, more powerful, reliable and faster than this modest plugin. I'm not a jQuery plugin specialist so this piece of code is likely full of bugs, glitches, trojans and god only knows what else.</p>
-                    <p><a class="btn" href="#">View details &raquo;</a></p>
-                </div>
-                <div class="span4">
-                    <h2>Your boss think the other way</h2>
-                    <img src="img/boss.png" width="77" height="66" alt="Achtun!" />
-                    <p>The customer is always right, who do you think you are to contradict him? A programmer, that's what you are. Don't pretend to know anything about human habits. The truth is real men like to click buttons, keys shortcuts and toolbars are for loosers. Period.</p>
-                    <p><a class="btn" href="#">View details &raquo;</a></p>
-                </div>
-                <div class="span4">
-                    <h2>If you really have to</h2>
-                    <img src="img/sad-face.png" width="42" height="76" alt="Achtun!" />
-                    <p>There should be a link somewhere in this page to get it from github. It's been tested with some modern browswers (you know who you are) and it does require jquery. Otherwise, I feel sorry for you.</p>
-                    <p><a class="btn" href="#">View details &raquo;</a></p>
-                </div>
-            </div>
-
             <hr>
 
             <footer>

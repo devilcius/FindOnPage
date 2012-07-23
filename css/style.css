@@ -1,6 +1,6 @@
 div.hero-unit
 {
-    background: #eeeeee url(../img/find-icon.png) no-repeat top right;
+    background: #eeeeee url(../img/mbmmdi.png) no-repeat bottom right;
 }
 div.hero-unit p
 {
@@ -173,3 +173,22 @@ div#search-icon-container img
     float: left;
     padding:2px 5px;
 }
+
+
+.nav-tabs
+{
+    border-bottom: none;
+}
+.nav-tabs a
+{
+    border: none !important;
+}
+.nav-tabs  li
+{
+    margin-bottom: -1px;
+}
+/*.nav-tabs li.active
+{
+    margin-bottom: -1px;
+}*/
+/* usage */
