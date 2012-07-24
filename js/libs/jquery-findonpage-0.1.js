@@ -19,11 +19,6 @@
                 callback.apply();
         }
 
-        base.replacer = function replacer(match, p1, p2, p3, offset, string) {
-            // p1 is nondigits, p2 digits, and p3 non-alphanumerics
-            return '<span class="' + base.options.textHighlightClass + '">' + match + '</span>';
-        }
-
 
         base.init = function(){
             
@@ -62,10 +57,7 @@
                 launched = false;
             });
 
-            function replacer(match, p1, p2, p3, offset, string) {
-                // p1 is nondigits, p2 digits, and p3 non-alphanumerics
-                return '<span class="' + base.options.textHighlightClass + '">' + match + '</span>';
-            }
+
             function stripSpecialRegexCharacter(string) {
                 var specialChars = ["\\\\", "\\[", "\\]", "\\(", "\\)", "\\/", "\\*", "\\+", "\\?", "\\{", "\\}"];
                 var result = string;
@@ -75,39 +67,56 @@
                 return result;
             }
 
-            function sizeSort(a,b){
-                return a.innerHTML.length > b.innerHTML.length ? 1 : -1;
-            }
+            function innerHighlight(node, pattern) {
+                var skip = 0;
+                if (node.nodeType === 3) { // 3 - Text node
+                    var pos = node.data.search(pattern);
+                    if (pos >= 0 && node.data.length > 0) { // .* matching "" causes infinite loop
 
-            function highlightMe(regex, node) {
-
-                var result = base.options.caseSensitive? node.clone().children().remove().end().text().match(regex) : node.clone().children().remove().end().text().match(regex, "i");
-                if (result) { // matching!
-                    node.html(
-                        node.html().replace(new RegExp(regex, "ig"), replacer)
-                        );
+                        var match = node.data.match(pattern); // get the match(es), but only handle the 1st one, hence /g is not recommended
+                        var spanNode = document.createElement('span');
+                        spanNode.className = base.options.textHighlightClass; // set css
+                        var middleBit = node.splitText(pos); // split to 2 nodes, node contains the pre-pos text, middleBit has the post-pos
+                        var endBit = middleBit.splitText(match[0].length); // similarly split middleBit to 2 nodes
+                        var middleClone = middleBit.cloneNode(true);
+                        spanNode.appendChild(middleClone);
+                        // parentNode ie. node, now has 3 nodes by 2 splitText()s, replace the middle with the highlighted spanNode:
+                        middleBit.parentNode.replaceChild(spanNode, middleBit);
+                        ;
+                        skip = 1; // skip this middleBit, but still need to check endBit
+                    }
+                } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) { // 1 - Element node
+                    for (var i = 0; i < node.childNodes.length; i++) { // highlight all children
+                        i += innerHighlight(node.childNodes[i], pattern); // skip highlighted ones
+                    }
                 }
+                return skip;
             }
+
 
             $searchBox.keyup(function (event) {
-                $('.' + base.options.textHighlightClass).contents().unwrap(); //removes previously added span.textFound
-     
+
                 matchCount = 0;
                 var $this = $(this);
                 currentMatchIndex = 0;
-
-                if ($this.val().length > base.options.minLength) {
-                    var theRegex = stripSpecialRegexCharacter($this.val()).replace(new RegExp("\\s", "g"), "\\s+").replace(new RegExp("'", "g"), "\\'");                    
-                    $(base.options.parentContainer)
-                    .find('*')
-                    .sort(sizeSort)
-                    .filter(":visible")
-                    .each(function(){
-                        if (!$(this).find("." + base.options.textHighlightClass).length)
-                            highlightMe(theRegex, $(this));
+                
+                if ($this.val().length > base.options.minLength - 1)//removes previously added span.textFound and empty text nodes...
+                    $('.' + base.options.textHighlightClass).contents().unwrap().filter(function(){
+                        if(this.parentNode)
+                            with(this.parentNode)
+                                normalize();
                     });
 
-                    matchCount = $("span." + base.options.textHighlightClass).length;
+                if ($this.val().length > base.options.minLength) {
+                    var filteredString = stripSpecialRegexCharacter($this.val()).replace(new RegExp("\\s", "i"), "\\s+").replace(new RegExp("'", "g"), "\\'");
+                    var regex = base.options.caseSensitive? new RegExp(filteredString) : new RegExp(filteredString, "i");
+
+                    innerHighlight($(base.options.parentContainer)[0], regex);
+
+                    //ommit hidden nodes
+                    matchCount = $("span." + base.options.textHighlightClass).filter(function(){
+                        return $(this).closest(":hidden").length === 0;
+                    }).length;
                     
                     //enable next match button if more than 1 result found
                     if (matchCount > 1)
@@ -140,15 +149,14 @@
             //navigation buttons
             $("#fop_search_text_buttons-container button:not(#close-fop_search_box-container)").click(function () {
 
-                var currentMatchCount = $("span." + base.options.textHighlightClass).length;
                 var direction = $(this).attr("id");
 
-                if (currentMatchCount < 2) {
+                if (matchCount < 2) {
                     $("button.match-nav").attr("disabled",true);
                     return false;
                 }
 
-                if (direction == "fop_search-fw" && (currentMatchIndex < (currentMatchCount - 1))) {
+                if (direction == "fop_search-fw" && (currentMatchIndex < (matchCount - 1))) {
                     currentMatchIndex++;
                     scrollToMatch(currentMatchIndex);
                 }
@@ -157,7 +165,7 @@
                     scrollToMatch(currentMatchIndex);
                 }
                 //update match counter
-                $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + currentMatchCount);
+                $searchMatchesContainer.text((currentMatchIndex + 1) + "/" + matchCount);
 
             });
 

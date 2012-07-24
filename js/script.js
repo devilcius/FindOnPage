@@ -26,7 +26,7 @@ $(document).ready(function(){
         })
         
     $("a#find-on-page").findOnPage(
-    {caseSensitive:true},
+    {caseSensitive:false},
     function(){
         $("p.triangle-border").children("span").fadeOut(750, function(){
             $(this).text("Now it's time to try the magic. Type something in the search box.").fadeIn(750);
